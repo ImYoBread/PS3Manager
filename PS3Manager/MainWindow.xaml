@@ -1,0 +1,844 @@
+<Window x:Class="PS3Manager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PS3 Manager Pro v9" Height="900" Width="1550"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
+
+    <Window.Resources>
+        <!-- Colors -->
+        <SolidColorBrush x:Key="BgDark" Color="#0A0A0F"/>
+        <SolidColorBrush x:Key="BgCard" Color="#12121A"/>
+        <SolidColorBrush x:Key="BgHover" Color="#1E1E2E"/>
+        <SolidColorBrush x:Key="Border" Color="#2A2A3A"/>
+        <SolidColorBrush x:Key="TextW" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextG" Color="#A0A0B0"/>
+        <SolidColorBrush x:Key="TextD" Color="#606070"/>
+        <SolidColorBrush x:Key="Cyan" Color="#00D4FF"/>
+        <SolidColorBrush x:Key="Green" Color="#00FF88"/>
+        <SolidColorBrush x:Key="Pink" Color="#FF006E"/>
+        <SolidColorBrush x:Key="Orange" Color="#FF9500"/>
+        <SolidColorBrush x:Key="Purple" Color="#7B2CBF"/>
+
+        <!-- Styles -->
+        <Style x:Key="BtnStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource BgHover}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2A2A3A"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BtnCyan" TargetType="Button" BasedOn="{StaticResource BtnStyle}">
+            <Setter Property="Background" Value="{StaticResource Cyan}"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#33DDFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BtnGreen" TargetType="Button" BasedOn="{StaticResource BtnStyle}">
+            <Setter Property="Background" Value="{StaticResource Green}"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#33FF99"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BtnPink" TargetType="Button" BasedOn="{StaticResource BtnStyle}">
+            <Setter Property="Background" Value="{StaticResource Pink}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF3388"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="NavBtn" TargetType="Button" BasedOn="{StaticResource BtnStyle}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="18,12"/>
+            <Setter Property="Margin" Value="8,2"/>
+            <Style.Triggers>
+                <Trigger Property="Tag" Value="Active">
+                    <Setter Property="Background" Value="{StaticResource Cyan}"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TxtStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource BgDark}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="CaretBrush" Value="{StaticResource Cyan}"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource BgCard}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+        </Style>
+
+        <!-- Dark Context Menu -->
+        <Style x:Key="DarkContextMenu" TargetType="ContextMenu">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="HasDropShadow" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContextMenu">
+                        <Border Background="#12121A" BorderBrush="#2A2A3A"
+                                BorderThickness="1" CornerRadius="6" Padding="4,6">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="MenuItem">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="4"
+                                Padding="12,8" Margin="2,1" Cursor="Hand">
+                            <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1E1E2E"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#404050"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Separator">
+            <Setter Property="Height" Value="1"/>
+            <Setter Property="Margin" Value="8,4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Separator">
+                        <Border Background="#2A2A3A" Height="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource BgDark}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Border}"/>
+            <Setter Property="Padding" Value="8,6"/>
+        </Style>
+
+        <Style TargetType="ProgressBar">
+            <Setter Property="Background" Value="{StaticResource BgDark}"/>
+            <Setter Property="Foreground" Value="{StaticResource Cyan}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="8"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="{StaticResource BgDark}" CornerRadius="12" BorderBrush="{StaticResource Border}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="28"/>
+            </Grid.RowDefinitions>
+
+            <!-- Title Bar -->
+            <Border Background="{StaticResource BgCard}" CornerRadius="12,12,0,0" MouseLeftButtonDown="TitleBar_Drag">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="18,0">
+                        <TextBlock Text="🎮" FontSize="18" VerticalAlignment="Center"/>
+                        <TextBlock Text="PS3 MANAGER PRO" Foreground="{StaticResource Cyan}" FontSize="15" FontWeight="Bold" Margin="10,0" VerticalAlignment="Center"/>
+                        <Border x:Name="badgeFW" Background="{StaticResource BgHover}" CornerRadius="4" Padding="10,4" VerticalAlignment="Center">
+                            <TextBlock x:Name="txtFW" Text="NOT CONNECTED" Foreground="{StaticResource TextD}" FontSize="10" FontWeight="Bold"/>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                        <Button Content="─" Width="40" Height="32" Click="Min_Click" Style="{StaticResource BtnStyle}" Padding="0"/>
+                        <Button Content="□" Width="40" Height="32" Click="Max_Click" Style="{StaticResource BtnStyle}" Padding="0" Margin="5,0"/>
+                        <Button Content="✕" Width="40" Height="32" Click="Close_Click" Style="{StaticResource BtnPink}" Padding="0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Main Content -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Sidebar -->
+                <Border Background="{StaticResource BgCard}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Style="{StaticResource CardStyle}" Margin="10" Padding="12">
+                            <StackPanel>
+                                <TextBlock Text="CONNECTION" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" Margin="0,0,0,8"/>
+                                <TextBox x:Name="txtIP" Style="{StaticResource TxtStyle}" Text="192.168.1.8"/>
+                                <Button x:Name="btnConnect" Content="⚡ CONNECT" Style="{StaticResource BtnCyan}" Margin="0,10,0,0" Click="Connect_Click"/>
+                                <Border Background="{StaticResource BgDark}" CornerRadius="6" Padding="10,6" Margin="0,10,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse x:Name="statusDot" Width="8" Height="8" Fill="{StaticResource TextD}"/>
+                                        <TextBlock x:Name="txtStatus" Text="Disconnected" Foreground="{StaticResource TextG}" FontSize="11" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="0,0,0,10">
+                            <TextBlock Text="MAIN" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" Margin="18,8,0,6"/>
+                            <Button x:Name="navDash" Content="📊  Dashboard" Style="{StaticResource NavBtn}" Tag="Active" Click="Nav_Click"/>
+                            <Button x:Name="navGames" Content="🎮  Games" Style="{StaticResource NavBtn}" Click="Nav_Click"/>
+                            <Button x:Name="navFiles" Content="📁  File Manager" Style="{StaticResource NavBtn}" Click="Nav_Click"/>
+                            <Button x:Name="navPKG" Content="📦  PKG Installer" Style="{StaticResource NavBtn}" Click="Nav_Click"/>
+                            <TextBlock Text="DOWNLOADS" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" Margin="18,15,0,6"/>
+                            <Button x:Name="navDownloads" Content="⬇️  Myrient" Style="{StaticResource NavBtn}" Click="Nav_Click"/>
+                            <TextBlock Text="SYSTEM" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" Margin="18,15,0,6"/>
+                            <Button x:Name="navWebMAN" Content="🌐  WebMAN" Style="{StaticResource NavBtn}" Click="Nav_Click"/>
+                            <Button x:Name="navTweaks" Content="⚙️  Tweaks" Style="{StaticResource NavBtn}" Click="Nav_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Content Area - All pages stacked -->
+                <Grid Grid.Column="1" Margin="15">
+
+                    <!-- Dashboard Page -->
+                    <ScrollViewer x:Name="pageDash" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Dashboard" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextW}" Margin="0,0,0,15"/>
+                            <UniformGrid Columns="5" Margin="0,0,0,15">
+                                <Border Style="{StaticResource CardStyle}" Margin="0,0,6,0">
+                                    <StackPanel>
+                                        <TextBlock Text="GAMES" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold"/>
+                                        <TextBlock x:Name="txtGameCount" Text="--" Foreground="{StaticResource Cyan}" FontSize="28" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource CardStyle}" Margin="3,0">
+                                    <StackPanel>
+                                        <TextBlock Text="FREE SPACE" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold"/>
+                                        <TextBlock x:Name="txtFree" Text="--" Foreground="{StaticResource Green}" FontSize="28" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource CardStyle}" Margin="3,0">
+                                    <StackPanel>
+                                        <TextBlock Text="CPU" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold"/>
+                                        <TextBlock x:Name="txtCPU" Text="--" Foreground="{StaticResource Pink}" FontSize="28" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource CardStyle}" Margin="3,0">
+                                    <StackPanel>
+                                        <TextBlock Text="RSX" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold"/>
+                                        <TextBlock x:Name="txtRSX" Text="--" Foreground="{StaticResource Orange}" FontSize="28" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource CardStyle}" Margin="6,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="FAN" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold"/>
+                                        <TextBlock x:Name="txtFan" Text="--" Foreground="{StaticResource Purple}" FontSize="28" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="240"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Style="{StaticResource CardStyle}" Margin="0,0,8,0">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                            <TextBlock Text="RECENT GAMES" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            <Button Content="🔄 Refresh" Style="{StaticResource BtnCyan}" Margin="15,0,0,0" Padding="10,5" Click="RefreshGames_Click"/>
+                                        </StackPanel>
+                                        <ListBox x:Name="lstDashGames" Background="Transparent" BorderThickness="0" MaxHeight="350">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,3">
+                                                        <TextBlock Text="{Binding Icon}" FontSize="16" Width="28" VerticalAlignment="Center"/>
+                                                        <StackPanel Margin="6,0,12,0" Width="300">
+                                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                                            <TextBlock Text="{Binding TitleID}" FontSize="10" Foreground="#00D4FF"/>
+                                                        </StackPanel>
+                                                        <Button Content="▶" Background="#00FF88" Foreground="Black" Padding="8,4" Tag="{Binding}" Click="MountGame_Click"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="QUICK ACTIONS" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" Margin="0,0,0,10"/>
+                                        <Button Content="🔄 Restart" Style="{StaticResource BtnStyle}" Margin="0,0,0,6" Click="Restart_Click"/>
+                                        <Button Content="⏻ Shutdown" Style="{StaticResource BtnPink}" Margin="0,0,0,6" Click="Shutdown_Click"/>
+                                        <Button Content="📷 Screenshot" Style="{StaticResource BtnStyle}" Margin="0,0,0,6" Click="Screenshot_Click"/>
+                                        <Button Content="⏏ Eject Disc" Style="{StaticResource BtnStyle}" Margin="0,0,0,6" Click="Eject_Click"/>
+                                        <Button Content="🌐 Open WebMAN" Style="{StaticResource BtnCyan}" Click="OpenWebMAN_Click"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Games Page -->
+                    <ScrollViewer x:Name="pageGames" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Game Library" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextW}" Margin="0,0,0,15"/>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="txtSearch" Style="{StaticResource TxtStyle}" TextChanged="Search_Changed"/>
+                                <Button Grid.Column="1" Content="🔄 Scan Games" Style="{StaticResource BtnCyan}" Margin="10,0,0,0" Click="RefreshGames_Click"/>
+                            </Grid>
+                            <ListBox x:Name="lstGames" Background="Transparent" BorderThickness="0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="36"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Icon}" FontSize="20" VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1" Margin="8,0">
+                                                <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                                    <Border Background="#1A1A2E" CornerRadius="3" Padding="5,1" Margin="0,0,5,0">
+                                                        <TextBlock Text="{Binding TitleID}" FontSize="9" Foreground="#00D4FF"/>
+                                                    </Border>
+                                                    <Border Background="#1A1A2E" CornerRadius="3" Padding="5,1">
+                                                        <TextBlock Text="{Binding Type}" FontSize="9" Foreground="#7B2CBF"/>
+                                                    </Border>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Button Grid.Column="2" Content="▶ Mount" Background="#00FF88" Foreground="Black" Padding="8,5" Margin="0,0,6,0" Tag="{Binding}" Click="MountGame_Click"/>
+                                            <Button Grid.Column="3" Content="🗑" Background="Transparent" Foreground="#E94560" BorderBrush="#E94560" Padding="8,5" Tag="{Binding}" Click="DeleteGame_Click"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- FILE MANAGER -->
+                    <Grid x:Name="pageFiles" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <TextBlock Text="File Manager" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextW}"/>
+                            <TextBlock Text="  •  Drag &amp; Drop to transfer" FontSize="12" Foreground="{StaticResource TextD}" VerticalAlignment="Bottom" Margin="0,0,0,4"/>
+                            <Border Background="{StaticResource BgHover}" CornerRadius="4" Padding="8,4" Margin="15,0,0,0" VerticalAlignment="Bottom">
+                                <TextBlock Text="📅 Sorted: Recent First" Foreground="{StaticResource Cyan}" FontSize="10" FontWeight="Bold"/>
+                            </Border>
+                        </StackPanel>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- LOCAL PC Panel -->
+                            <Border Style="{StaticResource CardStyle}" Padding="10">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="💻 LOCAL PC" Foreground="{StaticResource Cyan}" FontSize="11" FontWeight="Bold" Margin="0,0,0,8"/>
+
+                                    <Grid Grid.Row="1" Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="cmbDrives" Background="{StaticResource BgDark}" Foreground="White" Padding="8,6" SelectionChanged="LocalDrive_Changed"/>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="6,0,0,0">
+                                            <Button Content="⬆" Style="{StaticResource BtnStyle}" Padding="10,6" Click="LocalUp_Click"/>
+                                            <Button Content="🔄" Style="{StaticResource BtnStyle}" Padding="10,6" Margin="4,0,0,0" Click="LocalRefresh_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Grid Grid.Row="2" Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock x:Name="txtLocalPath" Text="C:\" Foreground="{StaticResource TextG}" FontSize="10" TextTrimming="CharacterEllipsis"/>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <TextBlock Text="Sort: " Foreground="{StaticResource TextD}" FontSize="10"/>
+                                            <TextBlock Text="Recent" Foreground="{StaticResource Cyan}" FontSize="10" FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Grid.Row="3" Background="{StaticResource BgDark}" CornerRadius="6" Padding="5">
+                                        <ListBox x:Name="lstLocal" Background="Transparent" BorderThickness="0" 
+                                                 AllowDrop="True" Drop="Local_Drop" 
+                                                 PreviewMouseLeftButtonDown="Local_PreviewMouseDown"
+                                                 PreviewMouseMove="Local_PreviewMouseMove"
+                                                 MouseDoubleClick="Local_DblClick"
+                                                 SelectionMode="Extended"
+                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="2">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="22"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="80"/>
+                                                            <ColumnDefinition Width="70"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding Icon}" FontSize="12"/>
+                                                        <StackPanel Grid.Column="1" Margin="4,0">
+                                                            <TextBlock Text="{Binding Name}" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                                            <TextBlock Text="{Binding ModifiedTime}" Foreground="#505050" FontSize="9"/>
+                                                        </StackPanel>
+                                                        <TextBlock Grid.Column="2" Text="{Binding Type}" Foreground="{StaticResource TextD}" HorizontalAlignment="Right" FontSize="9"/>
+                                                        <TextBlock Grid.Column="3" Text="{Binding Size}" Foreground="#606060" HorizontalAlignment="Right" FontSize="10"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <!-- Transfer Buttons -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <Button Content="➡" Style="{StaticResource BtnCyan}" FontSize="18" Padding="12,10" Margin="0,0,0,10" Click="TransferToPS3_Click" ToolTip="Upload to PS3"/>
+                                <Button Content="⬅" Style="{StaticResource BtnGreen}" FontSize="18" Padding="12,10" Click="TransferToPC_Click" ToolTip="Download to PC"/>
+                            </StackPanel>
+
+                            <!-- PS3 REMOTE Panel -->
+                            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="10">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <TextBlock Text="🎮 PS3 REMOTE" Foreground="{StaticResource Orange}" FontSize="11" FontWeight="Bold"/>
+                                        <TextBlock x:Name="txtPS3Status" Text=" (Not connected)" Foreground="{StaticResource TextD}" FontSize="10"/>
+                                    </StackPanel>
+
+                                    <Grid Grid.Row="1" Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="txtRemotePath" Style="{StaticResource TxtStyle}" Text="/" Padding="8,6" KeyDown="RemotePath_KeyDown"/>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="6,0,0,0">
+                                            <Button Content="⬆" Style="{StaticResource BtnStyle}" Padding="10,6" Click="RemoteUp_Click"/>
+                                            <Button Content="🔄" Style="{StaticResource BtnStyle}" Padding="10,6" Margin="4,0,0,0" Click="RemoteRefresh_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,6">
+                                        <Button Content="GAMES" Background="{StaticResource BgHover}" Foreground="{StaticResource TextG}" Padding="6,3" Margin="0,0,3,0" Tag="/dev_hdd0/GAMES" Click="QuickNav"/>
+                                        <Button Content="PSXISO" Background="{StaticResource BgHover}" Foreground="{StaticResource TextG}" Padding="6,3" Margin="0,0,3,0" Tag="/dev_hdd0/PSXISO" Click="QuickNav"/>
+                                        <Button Content="PS2ISO" Background="{StaticResource BgHover}" Foreground="{StaticResource TextG}" Padding="6,3" Margin="0,0,3,0" Tag="/dev_hdd0/PS2ISO" Click="QuickNav"/>
+                                        <Button Content="PS3ISO" Background="{StaticResource BgHover}" Foreground="{StaticResource TextG}" Padding="6,3" Margin="0,0,3,0" Tag="/dev_hdd0/PS3ISO" Click="QuickNav"/>
+                                        <Button Content="pkg" Background="{StaticResource BgHover}" Foreground="{StaticResource TextG}" Padding="6,3" Margin="0,0,3,0" Tag="/dev_hdd0/packages" Click="QuickNav"/>
+                                        <Button Content="USB" Background="{StaticResource BgHover}" Foreground="{StaticResource TextG}" Padding="6,3" Tag="/dev_usb000" Click="QuickNav"/>
+                                    </StackPanel>
+
+                                    <Border Grid.Row="3" Background="{StaticResource BgDark}" CornerRadius="6" Padding="5">
+                                        <ListBox x:Name="lstRemote" Background="Transparent" BorderThickness="0"
+                                                 AllowDrop="True" Drop="Remote_Drop"
+                                                 PreviewMouseLeftButtonDown="Remote_PreviewMouseDown"
+                                                 PreviewMouseMove="Remote_PreviewMouseMove"
+                                                 MouseDoubleClick="Remote_DblClick"
+                                                 SelectionMode="Extended"
+                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="2">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="22"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="65"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding Icon}" FontSize="12"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Grid.Column="2" Text="{Binding Size}" Foreground="#606060" HorizontalAlignment="Right" FontSize="10"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- Transfer Progress Panel -->
+                        <Border Grid.Row="2" x:Name="transferPanel" Visibility="Collapsed"
+                                Background="{StaticResource BgCard}" CornerRadius="8"
+                                BorderBrush="{StaticResource Border}" BorderThickness="1"
+                                Padding="12,10" Margin="0,10,0,0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Row 0: Direction + file name + cancel -->
+                                <DockPanel Grid.Row="0" Margin="0,0,0,6">
+                                    <Button x:Name="btnCancelTransfer" Content="✕" DockPanel.Dock="Right"
+                                            Style="{StaticResource BtnPink}" Padding="8,3" FontSize="10"
+                                            Click="CancelTransfer_Click" ToolTip="Cancel Transfer"
+                                            Visibility="Collapsed"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock x:Name="txtTransferDirection" Text="⬆ UPLOADING"
+                                                   Foreground="{StaticResource Cyan}" FontSize="10" FontWeight="Bold"
+                                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock x:Name="txtTransferFileName" Text="" Foreground="White"
+                                                   FontSize="12" FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </DockPanel>
+
+                                <!-- Row 1: Progress bar -->
+                                <ProgressBar Grid.Row="1" x:Name="transferProgress" Height="8"
+                                             Minimum="0" Maximum="100" Value="0"
+                                             Background="#1A1A24" Foreground="{StaticResource Cyan}" Margin="0,0,0,6"/>
+
+                                <!-- Row 2: Speed | Bytes | Percent | ETA -->
+                                <Grid Grid.Row="2" Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="txtTransferSpeed" Text="" Foreground="{StaticResource Green}"
+                                               FontSize="11" FontFamily="Consolas" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" x:Name="txtTransferBytes" Text=""
+                                               Foreground="{StaticResource TextG}" FontSize="11" FontFamily="Consolas"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                        <TextBlock x:Name="txtTransferPercent" Text="0%" Foreground="{StaticResource Cyan}"
+                                                   FontSize="11" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <TextBlock x:Name="txtTransferETA" Text="" Foreground="{StaticResource TextD}"
+                                                   FontSize="11" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Row 3: File count -->
+                                <TextBlock Grid.Row="3" x:Name="txtTransferStatus" Text=""
+                                           Foreground="{StaticResource TextD}" FontSize="10"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- PKG Page -->
+                    <ScrollViewer x:Name="pagePKG" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="PKG Installer" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextW}" Margin="0,0,0,15"/>
+                            <Border Style="{StaticResource CardStyle}">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <Button Content="➕ Add PKG" Style="{StaticResource BtnCyan}" Click="AddPKG_Click"/>
+                                        <Button Content="🗑 Clear" Style="{StaticResource BtnPink}" Margin="10,0,0,0" Click="ClearPKG_Click"/>
+                                    </StackPanel>
+                                    <ListBox x:Name="lstPKG" Background="Transparent" BorderThickness="0" MaxHeight="400">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,3">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="24"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="70"/>
+                                                        <ColumnDefinition Width="70"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="📦" FontSize="12"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="White"/>
+                                                    <TextBlock Grid.Column="2" Text="{Binding Size}" Foreground="#606060"/>
+                                                    <TextBlock Grid.Column="3" Text="{Binding Status}" Foreground="#00D4FF" HorizontalAlignment="Right"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Margin="0,10,0,0">
+                                <ProgressBar x:Name="pkgProgress" Height="6" Background="{StaticResource BgDark}" Foreground="{StaticResource Cyan}"/>
+                                <Grid Margin="0,8,0,0">
+                                    <TextBlock x:Name="txtPKGStatus" Text="Ready" Foreground="{StaticResource TextG}"/>
+                                    <Button Content="▶ INSTALL" Style="{StaticResource BtnGreen}" HorizontalAlignment="Right" Click="InstallPKG_Click"/>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Downloads Page (Myrient) -->
+                    <ScrollViewer x:Name="pageDownloads" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Myrient Downloader" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextW}" Margin="0,0,0,15"/>
+
+                            <!-- Search Panel -->
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+                                <StackPanel>
+                                    <TextBlock Text="SEARCH GAMES" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" Margin="0,0,0,10"/>
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="txtMyrientSearch" Style="{StaticResource TxtStyle}" KeyDown="MyrientSearch_KeyDown"/>
+                                        <Button Grid.Column="1" Content="🔍 Search" Style="{StaticResource BtnCyan}" Margin="10,0,0,0" Click="MyrientSearch_Click"/>
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Platforms:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{StaticResource TextG}" FontSize="11"/>
+                                        <CheckBox x:Name="chkPS1" Content="PS1" IsChecked="True" Margin="0,0,15,0" Foreground="White" VerticalContentAlignment="Center"/>
+                                        <CheckBox x:Name="chkPS2" Content="PS2" IsChecked="True" Margin="0,0,15,0" Foreground="White" VerticalContentAlignment="Center"/>
+                                        <CheckBox x:Name="chkPS3" Content="PS3" IsChecked="True" Foreground="White" VerticalContentAlignment="Center"/>
+                                    </StackPanel>
+                                    <Separator Background="{StaticResource Border}" Margin="0,10,0,8"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox x:Name="chkAutoDecrypt" Content="Auto-Decrypt after download" IsChecked="True"
+                                                  Foreground="{StaticResource Green}" FontWeight="SemiBold" VerticalContentAlignment="Center" Margin="0,0,20,0"
+                                                  ToolTip="Automatically extract ZIP and decrypt ISO using ps3dec.exe + DKeys folder"/>
+                                        <TextBlock Text="🔑" FontSize="13" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                        <TextBlock Text="DKeys:" VerticalAlignment="Center" Margin="0,0,6,0" Foreground="{StaticResource TextG}" FontSize="11"/>
+                                        <Button Content="📁 Open DKeys" Style="{StaticResource BtnStyle}" Padding="8,3" FontSize="10" Click="OpenDKeysFolder_Click"
+                                                ToolTip="Open the DKeys folder (place .dkey files here)"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Results -->
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <TextBlock Text="SEARCH RESULTS" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <Button Content="⬇️ Download Selected" Style="{StaticResource BtnGreen}" Margin="15,0,0,0" Click="MyrientDownload_Click"/>
+                                    </StackPanel>
+                                    <ListBox x:Name="lstMyrientGames" Grid.Row="1" Background="Transparent" BorderThickness="0" MaxHeight="300" SelectionMode="Extended">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,3">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="50"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="100"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Platform}" FontWeight="Bold" Foreground="{StaticResource Cyan}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding FileName}" Foreground="White" TextTrimming="CharacterEllipsis" ToolTip="{Binding FileName}"/>
+                                                    <TextBlock Grid.Column="2" Text="{Binding SizeText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Right"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Active Downloads -->
+                            <Border Style="{StaticResource CardStyle}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <TextBlock Text="ACTIVE DOWNLOADS" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <Button Content="❌ Cancel All" Style="{StaticResource BtnPink}" Margin="10,0,0,0" Padding="10,4" Click="CancelDownload_Click"/>
+                                        <Button Content="🗑 Clear Done" Style="{StaticResource BtnStyle}" Margin="5,0,0,0" Padding="10,4" Click="ClearCompletedDownloads_Click"/>
+                                        <Button Content="📁 Folder" Style="{StaticResource BtnCyan}" Margin="5,0,0,0" Padding="10,4" Click="OpenDownloadsFolder_Click"/>
+                                    </StackPanel>
+                                    <ListBox x:Name="lstDownloads" Grid.Row="1" Background="Transparent" BorderThickness="0"
+                                             MaxHeight="450" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#0D0D14" CornerRadius="6" Padding="12,8" Margin="0,2"
+                                                        BorderBrush="#1E1E2E" BorderThickness="1">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
+
+                                                        <!-- Row 0: Platform badge + filename -->
+                                                        <DockPanel Grid.Row="0" Margin="0,0,0,6">
+                                                            <Border Background="#1A2A1A" CornerRadius="3" Padding="6,2"
+                                                                    DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,8,0">
+                                                                <TextBlock Text="{Binding Platform}" FontWeight="Bold"
+                                                                           FontSize="10" Foreground="#00FF88"/>
+                                                            </Border>
+                                                            <TextBlock Text="{Binding Name}" Foreground="White" FontSize="12"
+                                                                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                                                       VerticalAlignment="Center" ToolTip="{Binding Name}"/>
+                                                        </DockPanel>
+
+                                                        <!-- Row 1: Full-width progress bar -->
+                                                        <ProgressBar Grid.Row="1" Value="{Binding Progress}" Maximum="100"
+                                                                     Height="6" Background="#1A1A24" Foreground="#00D4FF"
+                                                                     Minimum="0" Margin="0,0,0,5"/>
+
+                                                        <!-- Row 2: Status line -->
+                                                        <TextBlock Grid.Row="2" Text="{Binding Status}" Foreground="#808098"
+                                                                   FontSize="11" FontFamily="Consolas"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- WebMAN Page -->
+                    <ScrollViewer x:Name="pageWebMAN" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="WebMAN Controls" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextW}" Margin="0,0,0,15"/>
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="POWER &amp; SYSTEM" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" Margin="0,0,0,10"/>
+                                    <WrapPanel>
+                                        <Button Content="🔄 Restart" Style="{StaticResource BtnStyle}" Margin="0,0,6,6" Click="Restart_Click"/>
+                                        <Button Content="⏻ Shutdown" Style="{StaticResource BtnPink}" Margin="0,0,6,6" Click="Shutdown_Click"/>
+                                        <Button Content="💤 Soft Reboot" Style="{StaticResource BtnStyle}" Margin="0,0,6,6" Click="SoftReboot_Click"/>
+                                        <Button Content="📷 Screenshot" Style="{StaticResource BtnStyle}" Margin="0,0,6,6" Click="Screenshot_Click"/>
+                                        <Button Content="⏏ Eject" Style="{StaticResource BtnStyle}" Margin="0,0,6,6" Click="Eject_Click"/>
+                                        <Button Content="🔔 Beep" Style="{StaticResource BtnStyle}" Margin="0,0,6,6" Click="Beep_Click"/>
+                                        <Button Content="❌ Unmount" Style="{StaticResource BtnPink}" Margin="0,0,6,6" Click="Unmount_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="FAN CONTROL" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" Margin="0,0,0,10"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="sliderFan" Minimum="20" Maximum="100" Value="40" Foreground="{StaticResource Cyan}"/>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
+                                            <TextBlock x:Name="txtFanVal" Text="40%" Foreground="{StaticResource Cyan}" FontWeight="Bold" Width="40" VerticalAlignment="Center"/>
+                                            <Button Content="Set" Style="{StaticResource BtnCyan}" Margin="6,0,0,0" Click="SetFan_Click"/>
+                                            <Button Content="Auto" Style="{StaticResource BtnStyle}" Margin="6,0,0,0" Click="AutoFan_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardStyle}">
+                                <StackPanel>
+                                    <TextBlock Text="POPUP MESSAGE" Foreground="{StaticResource TextD}" FontSize="9" FontWeight="Bold" Margin="0,0,0,10"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="txtPopup" Style="{StaticResource TxtStyle}" Text="Hello from PS3 Manager!"/>
+                                        <Button Grid.Column="1" Content="📤 Send" Style="{StaticResource BtnCyan}" Margin="8,0,0,0" Click="SendPopup_Click"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Tweaks Page -->
+                    <ScrollViewer x:Name="pageTweaks" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Console Tweaks" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextW}" Margin="0,0,0,15"/>
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="SYSCALLS" Foreground="{StaticResource Pink}" FontSize="10" FontWeight="Bold" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Disable before going online (PSN) to reduce ban risk." Foreground="{StaticResource TextG}" FontSize="11" Margin="0,0,0,10"/>
+                                    <WrapPanel>
+                                        <Button Content="🔓 Enable" Style="{StaticResource BtnGreen}" Margin="0,0,6,0" Click="EnableSyscalls_Click"/>
+                                        <Button Content="🔒 Disable" Style="{StaticResource BtnPink}" Click="DisableSyscalls_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardStyle}">
+                                <StackPanel>
+                                    <TextBlock Text="HEN / COBRA" Foreground="{StaticResource Orange}" FontSize="10" FontWeight="Bold" Margin="0,0,0,10"/>
+                                    <WrapPanel>
+                                        <Button Content="⚡ Enable HEN" Background="{StaticResource Orange}" Foreground="Black" Padding="12,8" Margin="0,0,6,0" Click="EnableHEN_Click"/>
+                                        <Button Content="🐍 Enable Cobra" Style="{StaticResource BtnCyan}" Margin="0,0,6,0" Click="EnableCobra_Click"/>
+                                        <Button Content="❌ Disable Cobra" Style="{StaticResource BtnStyle}" Click="DisableCobra_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </Grid>
+            </Grid>
+
+            <!-- Status Bar -->
+            <Border Grid.Row="2" Background="{StaticResource BgCard}" CornerRadius="0,0,12,12">
+                <TextBlock x:Name="txtStatusBar" Text="Ready" Foreground="{StaticResource TextD}" FontSize="11" VerticalAlignment="Center" Margin="18,0"/>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
