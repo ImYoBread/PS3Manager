@@ -1,3 +1,6 @@
+Donations are very appreciated
+https://cash.app/$ElijahGarrett05
+
 Make sure you have the .NET 7.0 SDK installed
 
 
